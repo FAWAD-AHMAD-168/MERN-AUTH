@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel.js");
 const transporter = require("../config/nodemailer.js");
+const jwt = require("jsonwebtoken")
 
 const register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -117,6 +118,60 @@ const resendOTP = async (req, res) => {
   await transporter.sendMail(mailOptions);
   res.status(200).json({ message: "OTP  Resent  !!" });
 };
+
+//login 
+const login = async (req,res)=>{
+  const {email,password } = req.body ;
+  try {
+    if ( !email || !password ){
+      return res.status(400).json({message:"Both email and password are required !!!"})
+    }
+
+    const user = await User.findOne({email:email});
+    if(!user){
+      return res.status(400).json({message:"No User Found !!"})
+    }
+    if (!user.isConfirmed) {
+  return res.status(403).json({ message: "Please verify your email first" });
+}
+
+
+    const isMatched = await bcrypt.compare(password , user.password);
+    if(!isMatched){
+      return res.status(400).json({message:"Invalid Credentials"})
+    }
+    const token = jwt.sign({userID:user._id , email:user.email} ,process.env.JWT_SECRET,{expiresIn:"7d"});
+    res.cookie("token",token ,{
+      httpOnly:true,
+      secure:process.env.NODE_ENV === "production",
+      sameSite:"strict",
+      maxAge:7*24*60*60*1000
+
+    })
+
+    return res.status(200).json({message:"Login Successful",token:token})
+
+    
+  } catch (error) {
+    res.status(500).json({message:"Internal server error !!! "});
+    
+  }
+}
+
+//LOGOUT 
+const logout = async (req,res)=>{
+  try {
+      res.clearCookie("token" ,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV === "production",
+        sameSite:"strict"
+      });
+      return res.status(200).json({message:"Logout Successfull! MAUT KE MUHN SE BACH KE NIKAL GAYE "})
+  } catch (error) {
+    return res.status(500).json({message:"Internal server Error"})
+    
+  }
+}
 
 //  RESET  PASSWORD  OR FORGOT PASSWORD
 
@@ -283,6 +338,8 @@ module.exports = {
   register,
   verifyOTP,
   resendOTP,
+  login,
+  logout,
   resetOTP,
   verifyResetOTP,
   resetPassword,
