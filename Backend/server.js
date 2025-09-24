@@ -2,15 +2,21 @@
 const express = require('express');
 const chalk = require('chalk');
 const dotenv =  require("dotenv");
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+
 const connectDB = require('./config/db');
+
 const app = express();
 dotenv.config();
 connectDB();
 
-const authRoutes = require("./routes/authRoutes")
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
     res.json({
@@ -19,6 +25,7 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/auth",authRoutes)
+app.use("/api/user", userRoutes)
 
 
 

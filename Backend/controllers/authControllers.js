@@ -140,7 +140,7 @@ const login = async (req,res)=>{
     if(!isMatched){
       return res.status(400).json({message:"Invalid Credentials"})
     }
-    const token = jwt.sign({userID:user._id , email:user.email} ,process.env.JWT_SECRET,{expiresIn:"7d"});
+    const token = jwt.sign({userID:user._id , email:user.email ,name:user.username} ,process.env.JWT_SECRET,{expiresIn:"7d"});
     res.cookie("token",token ,{
       httpOnly:true,
       secure:process.env.NODE_ENV === "production",
@@ -149,7 +149,7 @@ const login = async (req,res)=>{
 
     })
 
-    return res.status(200).json({message:"Login Successful",token:token})
+    return res.status(200).json({message:"Login Successful"})
 
     
   } catch (error) {
