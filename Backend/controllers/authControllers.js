@@ -97,11 +97,9 @@ const resendOTP = async (req, res) => {
     return res.status(400).json({ message: "Email already verified !!" });
   }
   if (user.verifyotpExpAt > Date.now()) {
-    return res
-      .status(400)
-      .json({
-        message: "OTP already sent. Please wait before requesting a new one.",
-      });
+    return res.status(400).json({
+      message: "OTP already sent. Please wait before requesting a new one.",
+    });
   }
   const otp = Math.floor(100000 + Math.random() * 900000);
   const otpExpAt = Date.now() + 10 * 60 * 1000;
@@ -183,38 +181,36 @@ const verifyResetOTP = async (req, res) => {
     user.resetOtp = "";
     user.resetOtpExpAt = 0;
     await user.save();
-    res
-      .status(200)
-      .json({
-        message: "Email verified successfully.You can reset your password now.",
-      });
+    res.status(200).json({
+      message: "Email verified successfully.You can reset your password now.",
+    });
   } catch (error) {
     return res.status(500).json({ message: "Server Error!!!" });
   }
 };
 
-const resetPassword = async (req,res)=>{
-    const {email,newPassword}= req.body;
-    try {
-        if(!email || !newPassword){
-            return res.status(400).json({message:"All fields are required "});
-        }
-        const user = await User.findOne({email:email});
-        if (!user){
-            return res.status(400).json({message:'User not found!!'})
-        }
-        if(user.resetOtpConfirmed === false){
-            return res.status(400).json({message:"RESET OTP is not verified"});
-        }
-        const hashedPassword = await bcrypt.hash(newPassword,10);
-        user.password = hashedPassword;
-        user.resetOtpConfirmed = false;
-        await user.save();
-const mailOptions = {
-  from: process.env.SMTP_SENDER,
-  to: email,
-  subject: "Password Reset Successful",
-  html: `
+const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+  try {
+    if (!email || !newPassword) {
+      return res.status(400).json({ message: "All fields are required " });
+    }
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found!!" });
+    }
+    if (user.resetOtpConfirmed === false) {
+      return res.status(400).json({ message: "RESET OTP is not verified" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetOtpConfirmed = false;
+    await user.save();
+    const mailOptions = {
+      from: process.env.SMTP_SENDER,
+      to: email,
+      subject: "Password Reset Successful",
+      html: `
     <!doctype html>
     <html>
       <body style="background:#f9fafb;font-family:sans-serif;padding:20px;">
@@ -237,16 +233,58 @@ const mailOptions = {
         </div>
       </body>
     </html>
-  `
+  `,
+    };
+    await transporter.sendMail(mailOptions);
+    return res
+      .status(200)
+      .json({ message: "Password reset successful. You can login now." });
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error!!!" });
+  }
 };
-await transporter.sendMail(mailOptions);
-        return res.status(200).json({message:"Password reset successful. You can login now."})  
-        
-    } catch (error) {
-        return res.status(500).json({ message: "Server Error!!!" });
-        
+
+//Change the Password
+const changePassword = async (req, res) => {
+  const { email, oldPassword, newPassword } = req.body;
+  try {
+    if (!email || !oldPassword || !newPassword) {
+      return res.status(400).json({ message: "All fields are required !" });
     }
 
-}
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found !" });
+    }
 
-module.exports = { register, verifyOTP, resendOTP ,resetOTP , verifyResetOTP ,resetPassword};
+    if(!user.isConfirmed){
+      return res.status(400).json({message:"Veirfy your email first for changing the password "})
+    }
+    if(oldPassword === newPassword){
+      return res.status(400).json({message:"New Password must be different !!"})
+    }
+    const isMatched = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatched) {
+      return res.status(400).json({ message: "Incorrect Credentials!!" });
+    }
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = newHashedPassword;
+    await user.save();
+    return res
+      .status(200)
+      .json({ message: "Password changed successfully !!!!" });
+  } catch (error) {
+    return res.status(500).json({ message: "INTERNAL SERVER ERROR !" });
+  }
+};
+
+module.exports = {
+  register,
+  verifyOTP,
+  resendOTP,
+  resetOTP,
+  verifyResetOTP,
+  resetPassword,
+  changePassword,
+};
