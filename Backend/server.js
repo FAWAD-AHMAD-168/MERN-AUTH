@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 app.get('/', (req, res) => {
     res.json({
-        message:"JEEVY TU MAJAA"
+        message:"MERN AUTH APP "
     });
 });
 
