@@ -7,14 +7,16 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyOtp from "./pages/VerifyOtp";
 import ResetPassword from "./pages/ResetPassword";
-import NotFound from "./pages/NotFound";
+import Front from "./pages/Front";
+import NotFound from "./pages/Notfound";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
-    { path: "/verifyotp", element: <VerifyOtp /> },
+    { path: "/verify-otp", element: <VerifyOtp /> },
       { path: "/reset-password", element: <ResetPassword /> },
+      { path: "/home-page", element: <Front /> },
 
   { path: "*", element: <NotFound /> },
 ]);

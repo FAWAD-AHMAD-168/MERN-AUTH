@@ -11,6 +11,12 @@ const app = express();
 dotenv.config();
 connectDB();
 
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  credentials: true 
+}))
+
+
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 
