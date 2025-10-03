@@ -25,7 +25,6 @@ const Register = () => {
       toast.success(result.message);
 
      
-      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       navigate("/verify-otp", { state: { email: formData.email } });
     } catch (err) {

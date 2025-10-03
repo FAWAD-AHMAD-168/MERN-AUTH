@@ -99,7 +99,7 @@ const resendOTP = async (req, res) => {
   }
   if (user.verifyotpExpAt > Date.now()) {
     return res.status(400).json({
-      message: "OTP already sent. Please wait before requesting a new one.",
+      message: "OTP already sent.",
     });
   }
   const otp = Math.floor(100000 + Math.random() * 900000);

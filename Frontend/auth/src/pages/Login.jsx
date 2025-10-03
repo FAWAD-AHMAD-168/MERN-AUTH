@@ -5,22 +5,35 @@ import { useForm } from "react-hook-form";
 import { Mail, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { useLoginMutation } from "../services/authApi";
+import Loading from '../components/Loader';
 
 
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loginUser ,{isLoading}] = useLoginMutation();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    toast.success("Login successful!");
-    console.log(data);
-    navigate("/home-page");
+  const onSubmit = async  (data) => {
+    try {
+      const result = await loginUser(data).unwrap();
+      toast.success(result.message)
+      navigate("/home-page")
+    } catch (error) {
+const errMsg = error?.data?.message || "Login failed";
+toast.error(errMsg);
+
+    }
   };
+  if(isLoading){
+    return(<Loading/>)
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-blue-400 to-indigo-500">

@@ -1,7 +1,6 @@
-// src/services/api.js
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-// Basic api service (change baseUrl when your backend ready)
+
 export const authApi = createApi({
   reducerPath: 'auth',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/api' }),
@@ -24,9 +23,28 @@ export const authApi = createApi({
         body: userData,
       }),
     }),
+
+        // verify-otp
+    verifyotp: builder.mutation({
+      query: (data) => ({
+        url: 'auth/verify-otp',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+
+
+    resendOtp: builder.mutation({
+      query: (data) => ({
+        url: 'auth/resend-otp',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+
   }),
 })
 
-export const { useLoginMutation, useRegisterMutation } = authApi
+export const { useLoginMutation, useRegisterMutation ,useVerifyotpMutation ,useResendOtpMutation} = authApi
 
 export default authApi
