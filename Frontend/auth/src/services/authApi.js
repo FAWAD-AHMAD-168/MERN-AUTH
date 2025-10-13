@@ -1,16 +1,15 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const authApi = createApi({
-  reducerPath: 'auth',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:3000/api' }),
-  tagTypes: ['Auth'], 
+  reducerPath: "auth",
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
+  tagTypes: ["Auth"],
   endpoints: (builder) => ({
     // Login mutation
     login: builder.mutation({
       query: (credentials) => ({
-        url: 'auth/login',
-        method: 'POST',
+        url: "auth/login",
+        method: "POST",
         body: credentials,
       }),
     }),
@@ -18,33 +17,82 @@ export const authApi = createApi({
     // Register mutation
     register: builder.mutation({
       query: (userData) => ({
-        url: 'auth/register',
-        method: 'POST',
+        url: "auth/register",
+        method: "POST",
         body: userData,
       }),
     }),
 
-        // verify-otp
+    // verify-otp
     verifyotp: builder.mutation({
       query: (data) => ({
-        url: 'auth/verify-otp',
-        method: 'POST',
+        url: "auth/verify-otp",
+        method: "POST",
         body: data,
       }),
     }),
-
 
     resendOtp: builder.mutation({
       query: (data) => ({
-        url: 'auth/resend-otp',
-        method: 'POST',
+        url: "auth/resend-otp",
+        method: "POST",
         body: data,
       }),
     }),
 
+    resetOtp: builder.mutation({
+      query: (data) => ({
+        url: "auth/reset-otp",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    verifyResetOtp: builder.mutation({
+      query: (data) => ({
+        url: "auth/verify-reset-otp",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    resetPassword: builder.mutation({
+      query: (data) => ({
+        url: "auth/reset-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: "auth/change-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    logout: builder.mutation({
+      query: (data) => ({
+        url: "auth/logout",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
-})
+});
 
-export const { useLoginMutation, useRegisterMutation ,useVerifyotpMutation ,useResendOtpMutation} = authApi
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useVerifyotpMutation,
+  useResendOtpMutation,
+  useResetOtpMutation,
+  useVerifyResetOtpMutation,
+  useResetPasswordMutation,
+  useChangePasswordMutation,
+  useLogoutMutation,
+  
+} = authApi;
 
-export default authApi
+export default authApi;

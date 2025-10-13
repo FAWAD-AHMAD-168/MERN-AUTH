@@ -136,6 +136,7 @@ const login = async (req,res)=>{
 }
 
 
+
     const isMatched = await bcrypt.compare(password , user.password);
     if(!isMatched){
       return res.status(400).json({message:"Invalid Credentials"})
@@ -206,7 +207,7 @@ const resetOTP = async (req, res) => {
       text: `Your OTP for reset password is: ${resetOtp}. It is valid for 10 minutes.`,
     };
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "OTP  Resent  !!" });
+    res.status(200).json({ message: "Reset OTP  sent  !!" });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }

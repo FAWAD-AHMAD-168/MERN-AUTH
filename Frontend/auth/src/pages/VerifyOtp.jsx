@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Mail, KeyRound } from "lucide-react";
@@ -8,8 +8,8 @@ import Loader from "../components/Loader";
 
 const VerifyOtp = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { email } = location.state || {}; 
+  const email = localStorage.getItem("email");
+  
 
   const [verifyotp, { isLoading }] = useVerifyotpMutation();
   const [resendOtp, { isLoading: resendLoading }] = useResendOtpMutation();

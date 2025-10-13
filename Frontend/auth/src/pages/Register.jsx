@@ -24,6 +24,8 @@ const Register = () => {
 
       toast.success(result.message);
 
+      localStorage.setItem("email",formData.email)
+
      
 
       navigate("/verify-otp", { state: { email: formData.email } });
