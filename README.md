@@ -43,19 +43,7 @@ It provides a complete and secure flow — from registration and login to OTP-ba
 
 ---
 
-## 🧠 API Endpoints
 
-| Method | Endpoint | Description |
-|--------|-----------|-------------|
-| **POST** | `/api/auth/register` | Register a new user |
-| **POST** | `/api/auth/login` | User login |
-| **POST** | `/api/auth/logout` | Logout user |
-| **POST** | `/api/auth/forgot-password` | Send OTP to email |
-| **POST** | `/api/auth/verify-otp` | Verify OTP |
-| **POST** | `/api/auth/reset-password` | Reset password |
-| **GET** | `/api/auth/me` | Get logged-in user details |
-
----
 
 
 
