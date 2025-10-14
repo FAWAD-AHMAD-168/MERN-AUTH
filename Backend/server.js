@@ -11,9 +11,12 @@ const app = express();
 dotenv.config();
 connectDB();
 
+app.use(express.json());
+app.use(cookieParser());
+
 app.use(cors({
   origin: 'http://localhost:5173', 
-  credentials: true 
+  credentials: true ,
 }))
 
 
@@ -21,8 +24,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 
 
-app.use(express.json());
-app.use(cookieParser());
+
 
 app.get('/', (req, res) => {
     res.json({
@@ -35,7 +37,7 @@ app.use("/api/user", userRoutes)
 
 
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   
   console.log(chalk.yellow.bold(`✅ Server running at http://localhost:${process.env.PORT}`));

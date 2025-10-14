@@ -7,31 +7,32 @@ import { useResetPasswordMutation } from "../services/authApi";
 import Loader from "../components/Loader";
 
 const NewPassword = () => {
-    const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
-    const [resetPassword,{isLoading}] = useResetPasswordMutation();
-
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const resetEmail = localStorage.getItem("resetEmail");
 
   const onSubmit = async (data) => {
     try {
-
-        const response = await resetPassword(data).unwrap();
-        toast.success(response.message);
-        reset();
-        navigate("/login");
-
-        
+      const response = await resetPassword(data).unwrap();
+      toast.success(response.message);
+      reset();
+      localStorage.removeItem("resetEmail")
+      navigate("/login");
     } catch (error) {
-        const errMsg = error?.data?.message;
-        toast.error(errMsg || "Failed to reset password");
-
-        
+      const errMsg = error?.data?.message;
+      toast.error(errMsg || "Failed to reset password");
     }
   };
 
-  if(isLoading){
-    return (<Loader/>)
-};
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="flex flex-col justify-center items-center py-20">
@@ -39,7 +40,10 @@ const NewPassword = () => {
         Reset Your Password
       </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full max-w-sm">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6 w-full max-w-sm"
+      >
         {/* Email Field */}
         <div>
           <label className="block text-sm font-medium text-blue-700 mb-1">
@@ -51,6 +55,7 @@ const NewPassword = () => {
               type="email"
               placeholder="Enter your email"
               autoComplete="email"
+              defaultValue={resetEmail || ""}
               {...register("email", {
                 required: "Email is required",
                 pattern: {

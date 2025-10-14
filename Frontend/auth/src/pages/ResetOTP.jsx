@@ -7,24 +7,25 @@ import { toast } from "react-toastify";
 
 const ResetOTP = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
-  const [verifyOtp,{isLoading}] = useVerifyResetOtpMutation();
-  const resetEmail = localStorage.getItem("resetEmail") ;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+  const [verifyOtp, { isLoading }] = useVerifyResetOtpMutation();
+  const resetEmail = localStorage.getItem("resetEmail");
 
   const onSubmit = async (data) => {
-try {
-    const response = await verifyOtp(data).unwrap();
-    toast.success(response.message);
-    reset();
-    navigate("new-password");
-
-    
-} catch (error) {
-    const errMsg = error?.data?.message;
-    toast.error(errMsg || "Failed to verify OTP");
-
-    
-}
+    try {
+      const response = await verifyOtp(data).unwrap();
+      toast.success(response.message);
+      reset();
+      navigate("/forgot-password/new-password");
+    } catch (error) {
+      const errMsg = error?.data?.message;
+      toast.error(errMsg || "Failed to verify OTP");
+    }
   };
 
   if (isLoading) {
@@ -37,7 +38,10 @@ try {
         Verify OTP
       </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 w-full max-w-sm">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5 w-full max-w-sm"
+      >
         <div>
           <label className="block text-sm font-medium text-blue-700 mb-1">
             Email
@@ -48,7 +52,7 @@ try {
               type="email"
               placeholder="Enter your email"
               autoComplete="email"
-                defaultValue={resetEmail}
+              defaultValue={resetEmail}
               {...register("email", {
                 required: "Email is required",
                 pattern: {

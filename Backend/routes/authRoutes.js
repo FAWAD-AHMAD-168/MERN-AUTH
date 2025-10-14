@@ -17,7 +17,7 @@ const limiter = require("../middlewares/rateLimiter.js");
 router.post("/register", register);
 router.post("/verify-otp",limiter, verifyOTP);
 router.post("/resend-otp",verifyLimiter, resendOTP);
-router.post("/login",limiter, login);
+router.post("/login", login);
 router.post("/reset-otp",verifyLimiter, resetOTP);
 router.post("/verify-reset-otp",limiter, verifyResetOTP);
 router.post("/reset-password", resetPassword);
