@@ -11,15 +11,15 @@ const {
   resetPassword,
   changePassword,
 } = require("../controllers/authControllers.js");
-const limiter = require("../middlewares/rateLimiter.js");
+const rateLimiter = require("../middlewares/rateLimiter.js");
  const verifyLimiter = require("../middlewares/verifyLimiter.js");
 
 router.post("/register", register);
-router.post("/verify-otp",limiter, verifyOTP);
+router.post("/verify-otp",verifyLimiter, verifyOTP);
 router.post("/resend-otp",verifyLimiter, resendOTP);
-router.post("/login", login);
+router.post("/login",rateLimiter, login);
 router.post("/reset-otp",verifyLimiter, resetOTP);
-router.post("/verify-reset-otp",limiter, verifyResetOTP);
+router.post("/verify-reset-otp",verifyLimiter, verifyResetOTP);
 router.post("/reset-password", resetPassword);
 router.post("/change-password", changePassword);
 router.post("/logout", logout);

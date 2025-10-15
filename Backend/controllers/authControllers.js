@@ -167,7 +167,7 @@ const logout = async (req,res)=>{
         secure:process.env.NODE_ENV === "production",
         sameSite:"strict"
       });
-      return res.status(200).json({message:"Logout Successfull! MAUT KE MUHN SE BACH KE NIKAL GAYE "})
+      return res.status(200).json({message:"Logout Successfull! "})
   } catch (error) {
     return res.status(500).json({message:"Internal server Error"})
     

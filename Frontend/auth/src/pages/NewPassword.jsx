@@ -12,7 +12,7 @@ const NewPassword = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    
   } = useForm();
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
   const resetEmail = localStorage.getItem("resetEmail");
@@ -21,8 +21,10 @@ const NewPassword = () => {
     try {
       const response = await resetPassword(data).unwrap();
       toast.success(response.message);
-      reset();
+      
       localStorage.removeItem("resetEmail")
+
+      
       navigate("/login");
     } catch (error) {
       const errMsg = error?.data?.message;

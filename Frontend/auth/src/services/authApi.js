@@ -5,7 +5,7 @@ export const authApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" ,credentials: "include", }),
   tagTypes: ["Auth"],
   endpoints: (builder) => ({
-    // Login mutation
+    
     login: builder.mutation({
       query: (credentials) => ({
         url: "auth/login",
@@ -14,7 +14,7 @@ export const authApi = createApi({
       }),
     }),
 
-    // Register mutation
+   
     register: builder.mutation({
       query: (userData) => ({
         url: "auth/register",
@@ -23,7 +23,7 @@ export const authApi = createApi({
       }),
     }),
 
-    // verify-otp
+    
     verifyotp: builder.mutation({
       query: (data) => ({
         url: "auth/verify-otp",
@@ -73,10 +73,10 @@ export const authApi = createApi({
     }),
 
     logout: builder.mutation({
-      query: (data) => ({
+      query: () => ({
         url: "auth/logout",
         method: "POST",
-        body: data,
+      
       }),
     }),
   }),
