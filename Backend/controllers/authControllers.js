@@ -9,6 +9,7 @@ const register = async (req, res) => {
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required !!" });
     }
+    console.log("Starting registration...");
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists !!" });
@@ -19,6 +20,8 @@ const register = async (req, res) => {
         .status(400)
         .json({ message: "Choose a different username !!" });
     }
+    console.log("Checked existing user");
+
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -36,6 +39,8 @@ const register = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
+    console.log("OTP email sent");
+
 
     const newUser = new User({
       username,
@@ -51,6 +56,8 @@ const register = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
+  console.log("User saved, done!");
+
 };
 
 const verifyOTP = async (req, res) => {
