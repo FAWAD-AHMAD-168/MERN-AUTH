@@ -30,14 +30,14 @@ const register = async (req, res) => {
     const verifyOTP = otp.toString();
 
     //SENDING OTP  FOR EMAIL CONFIRMATON
-    // const mailOptions = {
-    //   from: process.env.SMTP_SENDER,
-    //   to: email,
-    //   subject: "Email Verification OTP",
-    //   text: `Your OTP for email verification is: ${verifyOTP}. It is valid for 10 minutes.`,
-    // };
+    const mailOptions = {
+      from: process.env.SMTP_SENDER,
+      to: email,
+      subject: "Email Verification OTP",
+      text: `Your OTP for email verification is: ${verifyOTP}. It is valid for 10 minutes.`,
+    };
 
-    // await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
     
 
     const newUser = new User({
@@ -113,14 +113,14 @@ const resendOTP = async (req, res) => {
   user.verifyotp = verifyOTP;
   user.verifyotpExpAt = otpExpAt;
   await user.save();
-  //SENDING OTP  FOR EMAIL CONFIRMATON
-  // const mailOptions = {
-  //   from: process.env.SMTP_SENDER,
-  //   to: email,
-  //   subject: "Email Verification OTP",
-  //   text: `Your OTP for email verification is: ${verifyOTP}. It is valid for 10 minutes.`,
-  // };
-  // await transporter.sendMail(mailOptions);
+  // SENDING OTP  FOR EMAIL CONFIRMATON
+  const mailOptions = {
+    from: process.env.SMTP_SENDER,
+    to: email,
+    subject: "Email Verification OTP",
+    text: `Your OTP for email verification is: ${verifyOTP}. It is valid for 10 minutes.`,
+  };
+  await transporter.sendMail(mailOptions);
   res.status(200).json({ message: "OTP  Resent  !!" });
 };
 
@@ -204,13 +204,13 @@ const resetOTP = async (req, res) => {
     user.resetOtp = resetOtp;
     user.resetOtpExpAt = otpExpAt;
     await user.save();
-    //SENDING OTP  FOR EMAIL CONFIRMATON
-    // const mailOptions = {
-    //   from: process.env.SMTP_SENDER,
-    //   to: email,
-    //   subject: "Reset Password OTP",
-    //   text: `Your OTP for reset password is: ${resetOtp}. It is valid for 10 minutes.`,
-    // };
+    // SENDING OTP  FOR EMAIL CONFIRMATON
+    const mailOptions = {
+      from: process.env.SMTP_SENDER,
+      to: email,
+      subject: "Reset Password OTP",
+      text: `Your OTP for reset password is: ${resetOtp}. It is valid for 10 minutes.`,
+    };
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "Reset OTP  sent  !!" });
   } catch (error) {
@@ -267,36 +267,36 @@ const resetPassword = async (req, res) => {
     user.password = hashedPassword;
     user.resetOtpConfirmed = false;
     await user.save();
-  //   const mailOptions = {
-  //     from: process.env.SMTP_SENDER,
-  //     to: email,
-  //     subject: "Password Reset Successful",
-  //     html: `
-  //   <!doctype html>
-  //   <html>
-  //     <body style="background:#f9fafb;font-family:sans-serif;padding:20px;">
-  //       <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
-  //         <h1 style="margin-top:0;color:#111827;font-size:20px;">Password Reset Successful</h1>
-  //         <p style="color:#374151;line-height:1.5;">
-  //           Hi there,
-  //         </p>
-  //         <p style="color:#374151;line-height:1.5;">
-  //           Your password has been successfully reset. You can now log in with your new password.
-  //         </p>
-  //         <p style="color:#374151;line-height:1.5;">
-  //           If you didn't request this change, you can safely ignore this email.
-  //         </p>
-  //         <div style="text-align:center;margin-top:20px;">
-  //           <a href="${process.env.FRONTEND_URL}/login" style="display:inline-block;background:#3b82f6;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;">
-  //             Sign in to your account
-  //           </a>
-  //         </div>
-  //       </div>
-  //     </body>
-  //   </html>
-  // `,
-  //   };
-  //   await transporter.sendMail(mailOptions);
+    const mailOptions = {
+      from: process.env.SMTP_SENDER,
+      to: email,
+      subject: "Password Reset Successful",
+      html: `
+    <!doctype html>
+    <html>
+      <body style="background:#f9fafb;font-family:sans-serif;padding:20px;">
+        <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+          <h1 style="margin-top:0;color:#111827;font-size:20px;">Password Reset Successful</h1>
+          <p style="color:#374151;line-height:1.5;">
+            Hi there,
+          </p>
+          <p style="color:#374151;line-height:1.5;">
+            Your password has been successfully reset. You can now log in with your new password.
+          </p>
+          <p style="color:#374151;line-height:1.5;">
+            If you didn't request this change, you can safely ignore this email.
+          </p>
+          <div style="text-align:center;margin-top:20px;">
+            <a href="${process.env.FRONTEND_URL}/login" style="display:inline-block;background:#3b82f6;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;">
+              Sign in to your account
+            </a>
+          </div>
+        </div>
+      </body>
+    </html>
+  `,
+    };
+    await transporter.sendMail(mailOptions);
     return res
       .status(200)
       .json({ message: "Password reset successful. You can login now." });
