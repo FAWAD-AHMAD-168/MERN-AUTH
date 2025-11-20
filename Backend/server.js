@@ -22,7 +22,7 @@ app.use(cors({
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-
+const uploadRoutes = require("./routes/uploadRoutes");
 
 
 
@@ -34,6 +34,7 @@ app.get('/', (req, res) => {
 
 app.use("/api/auth",authRoutes)
 app.use("/api/user", userRoutes)
+app.use("/api/upload" , uploadRoutes)
 
 
 
