@@ -40,5 +40,5 @@ app.use("/api/user", userRoutes)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   
-  console.log(chalk.yellow.bold(`✅ Server running at http://localhost:${process.env.PORT}`));
+  console.log(chalk.yellow.bold(`✅ Server is walking  at http://localhost:${process.env.PORT}`));
 });
