@@ -19,6 +19,8 @@ app.use(cors({
   credentials: true ,
 }))
 
+app.use("/uploads" ,express.static("uploads"));
+
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
