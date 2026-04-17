@@ -1,6 +1,7 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const {
+
+import {
   register,
   verifyOTP,
   login,
@@ -10,20 +11,20 @@ const {
   verifyResetOTP,
   resetPassword,
   changePassword,
-} = require("../controllers/authControllers.js");
-const rateLimiter = require("../middlewares/rateLimiter.js");
- const verifyLimiter = require("../middlewares/verifyLimiter.js");
- const verifyUser = require("../middlewares/userAuth.js");
+} from "../controllers/authControllers.js";
+
+import rateLimiter from "../middlewares/rateLimiter.js";
+import verifyLimiter from "../middlewares/verifyLimiter.js";
+import verifyUser from "../middlewares/userAuth.js";
 
 router.post("/register", register);
-router.post("/verify-otp",verifyLimiter, verifyOTP);
-router.post("/resend-otp",verifyLimiter, resendOTP);
-router.post("/login",rateLimiter, login);
-router.post("/reset-otp",verifyLimiter, resetOTP);
-router.post("/verify-reset-otp",verifyLimiter, verifyResetOTP);
+router.post("/verify-otp", verifyLimiter, verifyOTP);
+router.post("/resend-otp", verifyLimiter, resendOTP);
+router.post("/login", rateLimiter, login);
+router.post("/reset-otp", verifyLimiter, resetOTP);
+router.post("/verify-reset-otp", verifyLimiter, verifyResetOTP);
 router.post("/reset-password", resetPassword);
-router.post("/change-password", changePassword);
+router.post("/change-password",verifyUser, changePassword);
 router.post("/logout", logout);
 
-
-module.exports = router;
+export default router;

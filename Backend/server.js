@@ -1,11 +1,11 @@
 // server.js
-const express = require('express');
-const chalk = require('chalk');
-const dotenv =  require("dotenv");
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
+import express from "express";
+import chalk from "chalk";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
-const connectDB = require('./config/db');
+import connectDB from "./config/db.js";
 
 const app = express();
 dotenv.config();
@@ -14,34 +14,31 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-  origin: 'https://mern-auth-fro.onrender.com', 
-  credentials: true ,
-}))
-
-app.use("/uploads" ,express.static("uploads"));
-
-
-const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
-const uploadRoutes = require("./routes/uploadRoutes");
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+  }),
+);
+console.log(process.env.FRONTEND_URL);
 
 
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
-app.get('/', (req, res) => {
-    res.json({
-        message:"MERN AUTH APP "
-    });
+app.get("/", (req, res) => {
+  res.json({
+    message: "A Complete MERN Authentication System",
+  });
 });
 
-app.use("/api/auth",authRoutes)
-app.use("/api/user", userRoutes)
-app.use("/api/upload" , uploadRoutes)
-
-
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  
-  console.log(chalk.yellow.bold(`✅ Server is walking  at http://localhost:${process.env.PORT}`));
+  console.log(
+    chalk.yellow.bold(
+      `✅ Server is walking  at http://localhost:${process.env.PORT}`,
+    ),
+  );
 });
