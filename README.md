@@ -264,9 +264,9 @@ Create a `.env` file in backend:
 ```
 PORT=3000
 FRONTEND_URL=http://localhost:5173
-MONGO_URI=mongodb+srv://fawadahmad0059_db_user:e74c487OnwFBuyFz@cluster0.no49d5r.mongodb.net/MERN_AUTH?retryWrites=true&w=majority&appName=Cluster0
-JWT_SECRET=wanindu Hasaranga
-RESEND_API_KEY=re_4Fkp7rLv_2hThYHgWCFxgHJTJnh3Y4p17
+MONGO_URI=your_mongodb_uri_here
+JWT_SECRET=your_new_secret_here
+RESEND_API_KEY=your_new_api_key_here
 NODE_ENV=development
 SAME_SITE=lax
 
