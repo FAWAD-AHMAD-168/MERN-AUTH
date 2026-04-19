@@ -15,16 +15,17 @@ import {
 
 import rateLimiter from "../middlewares/rateLimiter.js";
 import verifyLimiter from "../middlewares/verifyLimiter.js";
-import verifyUser from "../middlewares/userAuth.js";
+import authenticateUser from "../middlewares/authenticateUser.js";
+import verifyUser from "../middlewares/verifyUser.js";
 
 router.post("/register", register);
-router.post("/verify-otp", verifyLimiter, verifyOTP);
-router.post("/resend-otp", verifyLimiter, resendOTP);
+router.post("/verify-otp",verifyUser, verifyLimiter, verifyOTP);
+router.post("/resend-otp",verifyUser, verifyLimiter, resendOTP);
 router.post("/login", rateLimiter, login);
 router.post("/reset-otp", verifyLimiter, resetOTP);
 router.post("/verify-reset-otp", verifyLimiter, verifyResetOTP);
 router.post("/reset-password", resetPassword);
-router.post("/change-password",verifyUser, changePassword);
-router.post("/logout", logout);
+router.post("/change-password",authenticateUser, changePassword);
+router.post("/logout", authenticateUser, logout);
 
 export default router;

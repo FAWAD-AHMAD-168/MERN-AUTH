@@ -4,8 +4,7 @@ import { ShieldCheck, LogOut } from "lucide-react";
 import profile from "../assets/profile.jpg";
 import { useUserDataQuery } from "../services/userApi";
 import {useLogoutMutation} from "../services/authApi";
-import Loader from "../components/Loader";
-import { toast } from "react-toastify";
+ import { toast } from "react-toastify";
 
 const UserProfile = () => {
   const { data, isLoading:isUserLoading, error } = useUserDataQuery();
@@ -43,15 +42,21 @@ const UserProfile = () => {
         </div>
 
         <div className="relative group">
-          <div className="h-10 w-10 rounded-full bg-blue-500 text-white flex justify-center items-center text-lg font-semibold cursor-pointer transition-transform duration-200 group-hover:scale-105">
+          <div className="h-10 w-10 rounded-full bg-blue-500 text-white flex justify-center items-center text-lg font-semibold cursor-pointer transition-transform duration-200 group-hover:scale-102">
             {userName?.charAt(0).toUpperCase()}
           </div>
-          <div className="absolute right-0 top-10 hidden group-hover:flex flex-col items-center bg-white shadow-md rounded-lg py-2 w-28 transition-all duration-300 z-10">
+          <div className="absolute right-0 top-10 hidden group-hover:flex flex-col items-center bg-white shadow-md rounded-lg py-2 w-48 transition-all duration-300 z-10">
             <button className="flex items-center gap-1 text-blue-500 hover:bg-blue-50 w-full justify-center py-2 rounded transition-all duration-200"
             onClick={handleLogout}
             >
               <LogOut size={16} />
               Logout
+            </button>
+            <button className="flex items-center gap-1 text-blue-500 hover:bg-blue-50 w-full justify-center py-2 rounded transition-all duration-200"
+            onClick={()=>navigate("/change-password")}
+            >
+             
+              Change Password
             </button>
           </div>
         </div>

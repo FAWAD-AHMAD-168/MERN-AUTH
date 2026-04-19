@@ -3,11 +3,6 @@ import User from "../models/userModel.js";
 import { resendEmail } from "../config/resendEmail.js";
 import jwt from "jsonwebtoken";
 
-
-
-
-
-
 const register = async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -27,14 +22,14 @@ const register = async (req, res) => {
 
     //GENERATING AN OTP
     const otp = Math.floor(100000 + Math.random() * 900000);
-    const otpExpAt = Date.now() + 10 * 60 * 1000;
+    const otpExpAt = Date.now() + 15 * 60 * 1000;
     const verifyOTP = otp.toString();
 
     //SENDING OTP  FOR EMAIL CONFIRMATON
     const response = await resendEmail(
       email,
       "Email Verification OTP",
-      `<p>Your OTP for email verification is: <h1>${verifyOTP}</h1> It is valid for 10 minutes.</p>`,
+      `<p>Your OTP for email verification is: <h1>${verifyOTP}</h1> It is valid for 15 minutes.</p>`,
     );
 
     const newUser = new User({
@@ -45,6 +40,24 @@ const register = async (req, res) => {
       verifyotpExpAt: otpExpAt,
     });
     await newUser.save();
+
+    //JWT Token After Registration
+
+    const regToken = jwt.sign(
+      { email: newUser.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "15m",
+      },
+    );
+
+    res.cookie("regToken", regToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.SAME_SITE,
+      maxAge: 15 * 60 * 1000,
+    });
+
     res
       .status(201)
       .json({ message: "Registered  and  OTP sent for email verification!" });
@@ -54,7 +67,8 @@ const register = async (req, res) => {
 };
 
 const verifyOTP = async (req, res) => {
-  const { email, otp } = req.body;
+  const email = req.user.email;
+  const { otp } = req.body;
   try {
     if (!email || !otp) {
       return res.status(400).json({ message: "All fields are required!" });
@@ -101,7 +115,7 @@ const resendOTP = async (req, res) => {
     });
   }
   const otp = Math.floor(100000 + Math.random() * 900000);
-  const otpExpAt = Date.now() + 10 * 60 * 1000;
+  const otpExpAt = Date.now() + 15 * 60 * 1000;
   const verifyOTP = otp.toString();
   user.verifyotp = verifyOTP;
   user.verifyotpExpAt = otpExpAt;
@@ -110,13 +124,21 @@ const resendOTP = async (req, res) => {
   await resendEmail(
     email,
     "Email Verification OTP",
-    `<p>Your OTP for email verification is: <h1>${verifyOTP}</h1> It is valid for 10 minutes.</p>`,
+    `<p>Your OTP for email verification is: <h1>${verifyOTP}</h1> It is valid for 15 minutes.</p>`,
   );
+
+  const regToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+    expiresIn: "15m",
+  });
+
+  res.cookie("regToken", regToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.SAME_SITE,
+    maxAge: 15 * 60 * 1000,
+  });
   res.status(200).json({ message: "OTP Resent!" });
 };
-
-
-
 
 //login
 const login = async (req, res) => {
@@ -142,16 +164,20 @@ const login = async (req, res) => {
     if (!isMatched) {
       return res.status(400).json({ message: "Invalid Credentials!" });
     }
-    const token = jwt.sign(
-      { userID: user._id, email: user.email, name: user.username },
+
+    const loginToken = jwt.sign(
+      { _id: user._id, username: user.username, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" },
+      {
+        expiresIn: "7d",
+      },
     );
-    res.cookie("token", token, {
+
+    res.cookie("loginToken", loginToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: process.env.SAME_SITE,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({ message: "Login Successful" });
@@ -160,14 +186,10 @@ const login = async (req, res) => {
   }
 };
 
-
-
-
-
 //LOGOUT
 const logout = async (req, res) => {
   try {
-    res.clearCookie("token", {
+    res.clearCookie("loginToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -177,10 +199,6 @@ const logout = async (req, res) => {
     return res.status(500).json({ message: "Internal server Error" });
   }
 };
-
-
-
-
 
 //FORGOT PASSWORD
 
@@ -197,7 +215,7 @@ const resetOTP = async (req, res) => {
     }
     if (user.resetOtpExpAt > Date.now()) {
       return res.status(400).json({
-        message: "Password Reset has already been sent!",
+        message: "Password Reset OTP has already been sent!",
       });
     }
     const otp = Math.floor(100000 + Math.random() * 900000);
@@ -229,7 +247,7 @@ const verifyResetOTP = async (req, res) => {
       return res.status(400).json({ message: "User not found !!" });
     }
 
-    const isExpired = user.resetOtpExpAtotpExpAt < Date.now();
+    const isExpired = user.resetOtpExpAt < Date.now();
     if (isExpired) {
       return res.status(400).json({ message: "OTP Expired !!" });
     }
@@ -282,13 +300,10 @@ const resetPassword = async (req, res) => {
   }
 };
 
-
-
-
-
 //Change the Password
 const changePassword = async (req, res) => {
-  const { email, oldPassword, newPassword } = req.body;
+  const email = req.user.email;
+  const { oldPassword, newPassword } = req.body;
   try {
     if (!email || !oldPassword || !newPassword) {
       return res.status(400).json({ message: "All fields are required!" });
@@ -317,6 +332,11 @@ const changePassword = async (req, res) => {
 
     user.password = newHashedPassword;
     await user.save();
+    await resendEmail(
+      email,
+      "Password Changed Successfully",
+      `<h2>Your password has been changed successfully.</h2> <p> If you did not perform this action, please contact support immediately.</p>`,
+    );
     return res.status(200).json({ message: "Password changed successfully!" });
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error!" });

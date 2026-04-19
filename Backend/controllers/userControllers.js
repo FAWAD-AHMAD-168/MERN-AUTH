@@ -2,7 +2,7 @@ import User from "../models/userModel.js";
 
 const getUserData = async (req, res) => {
   try {
-    const email = req.user;
+    const email = req.user.email;
 
     const user = await User.findOne({ email: email });
 

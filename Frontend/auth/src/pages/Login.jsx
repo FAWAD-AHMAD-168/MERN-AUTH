@@ -1,18 +1,16 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from "react-router";
 
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Mail, Lock } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { useLoginMutation } from "../services/authApi";
-import Loading from '../components/Loader';
-
-
 
 const Login = () => {
   const navigate = useNavigate();
-  const [loginUser ,{isLoading}] = useLoginMutation();
+  const [loginUser, { isLoading }] = useLoginMutation();
 
   const {
     register,
@@ -20,29 +18,25 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async  (data) => {
+  const onSubmit = async (data) => {
     try {
       const result = await loginUser(data).unwrap();
-      toast.success(result.message)
-      navigate("/user-profile")
+      toast.success(result.message);
+      navigate("/user-profile");
     } catch (error) {
-const errMsg = error?.data?.message || "Login failed";
-toast.error(errMsg);
-
+      const errMsg = error?.data?.message || "Login failed";
+      toast.error(errMsg);
     }
   };
-  if(isLoading){
-    return(<Loading/>)
-  }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-blue-400 to-indigo-500">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-blue-400 ">
       <div className="w-full  max-w-md bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl p-8 border border-blue-100">
         <h2 className="text-3xl font-bold text-center text-blue-700 mb-2">
-          MERN Auth 
+          MERN Auth
         </h2>
         <p className="text-center text-blue-600/70 mb-6 text-sm">
-          Sign in to access your account
+          Login in to access your account
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -96,29 +90,35 @@ toast.error(errMsg);
             )}
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition shadow-md"
-          >
-            Login
-          </button>
+          {isLoading ? (
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl disabled cursor-not-allowed flex items-center justify-center  "
+            >
+              <div className="flex gap-2">
+                <LoaderCircle className="animate-spin h-5 w-5 mx-auto" />
+                Logging in...
+              </div>
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition shadow-md"
+            >
+              Login
+            </button>
+          )}
         </form>
 
-        <div className="flex flex-col items-center mt-6 text-sm space-y-2">
-          <Link to="/register" className="text-blue-700 hover:underline">
+        <div className="flex gap-6 items-center justify-center mt-6 text-sm ">
+          <Link to="/register" className="text-blue-700  hover:underline ">
             Create Account
           </Link>
-          <div className="flex gap-4">
-            <Link to="/change-password" className="text-blue-700 hover:underline">
-              Change Password
-            </Link>
-            <Link
-              to="/forgot-password"
-              className="text-blue-700 hover:underline"
-            >
-              Forgot Password?
-            </Link>
-          </div>
+
+          <Link to="/forgot-password" className="text-blue-700 hover:underline">
+            Forgot Password?
+          </Link>
         </div>
       </div>
     </div>

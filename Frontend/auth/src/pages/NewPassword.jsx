@@ -1,11 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Mail, Lock } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useResetPasswordMutation } from "../services/authApi";
-import Loader from "../components/Loader";
-
+ 
 const NewPassword = () => {
   const navigate = useNavigate();
   const {
@@ -14,26 +15,22 @@ const NewPassword = () => {
     formState: { errors },
   } = useForm();
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
-  const resetEmail = localStorage.getItem("resetEmail");
 
   const onSubmit = async (data) => {
     try {
       const response = await resetPassword(data).unwrap();
       toast.success(response.message || "Password reset successful!");
-      localStorage.removeItem("resetEmail");
-      navigate("/login"); // ✅ absolute route
+      navigate("/login"); //
     } catch (error) {
       const errMsg = error?.data?.message;
       toast.error(errMsg || "Failed to reset password");
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 via-blue-400 to-indigo-500">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 to-blue-400">
       <div className="w-full max-w-md bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl p-8 border border-blue-100">
         <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
           Reset Your Password
@@ -49,10 +46,9 @@ const NewPassword = () => {
               <Mail className="text-blue-500 w-5 h-5 mr-2" />
               <input
                 type="email"
-                defaultValue={resetEmail || ""}
-                readOnly
+                placeholder="Enter your email"
                 {...register("email", { required: "Email is required" })}
-                className="w-full outline-none text-gray-900 bg-transparent cursor-not-allowed"
+                className="w-full outline-none text-gray-900 bg-transparent "
               />
             </div>
           </div>
@@ -84,12 +80,25 @@ const NewPassword = () => {
             )}
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition shadow-md"
-          >
-            Reset Password
-          </button>
+          {isLoading ? (
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl disabled cursor-not-allowed flex items-center justify-center  "
+            >
+              <div className="flex gap-2">
+                <LoaderCircle className="animate-spin h-5 w-5 mx-auto" />
+                Resetting...
+              </div>
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition shadow-md"
+            >
+              Reset Password
+            </button>
+          )}
         </form>
       </div>
     </div>

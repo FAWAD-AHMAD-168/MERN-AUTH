@@ -3,9 +3,9 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, User } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useRegisterMutation } from "../services/authApi";
-import Loader from "../components/Loader";
-import { toast } from "react-toastify";
+ import { toast } from "react-toastify";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -19,26 +19,20 @@ const Register = () => {
 
   const onSubmit = async (formData) => {
     try {
-     
       const result = await registerUser(formData).unwrap();
 
       toast.success(result.message);
 
-      localStorage.setItem("email",formData.email)
-
-     
+      localStorage.setItem("email", formData.email);
 
       navigate("/verify-otp", { state: { email: formData.email } });
     } catch (err) {
-      
       toast.error(err.data?.message || "Registration failed");
     }
   };
 
-  if (isLoading) return <Loader />;
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-blue-400 to-indigo-500">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-blue-400">
       <div className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 border border-blue-100">
         <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
           Create an Account
@@ -66,7 +60,9 @@ const Register = () => {
               />
             </div>
             {errors.username && (
-              <p className="text-sm text-red-500 mt-1">{errors.username.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {errors.username.message}
+              </p>
             )}
           </div>
 
@@ -91,7 +87,9 @@ const Register = () => {
               />
             </div>
             {errors.email && (
-              <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
@@ -120,16 +118,32 @@ const Register = () => {
               />
             </div>
             {errors.password && (
-              <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
-          <button
-            type="submit"
-            className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition shadow-md"
-          >
-            Register
-          </button>
+          {isLoading ? (
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl disabled cursor-not-allowed flex items-center justify-center backdrop-blur-md "
+            >
+              <div className="flex gap-2"> 
+                <LoaderCircle className="animate-spin h-5 w-5 mx-auto" />
+              Registering...
+              </div>
+             
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="w-full px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition shadow-md"
+            >
+              Register
+            </button>
+          )}
         </form>
 
         <div className="mt-6 text-center text-sm text-blue-700">
